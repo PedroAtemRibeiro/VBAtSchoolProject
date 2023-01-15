@@ -1,10 +1,9 @@
 # VBAtSchoolProject
- projeto  de um  sistema de gerenciamento de dados academis
-/Projet o Vba  
+Projeto de um sistema de gerenciamento de dados acadêmicos 
 
-Funcionalidades : Gerenciar Dados de uma determinada Planilha(adicionar, excluir e alterar), Gerar Relatório à parte(Em outra planilha), Filtrar Dados, Calcular Média e Exibir situação do Aluno
+Funcionalidades: Gerenciar dados de uma determinada planilha(adicionar, excluir e alterar), gerar relatório à parte(em outra planilha), filtrar dados, calcular média e exibir a situação do aluno.
 
-//ultima alter - adicionou-se um módulo de cálculo de média e um novo campo combobo x email
+Última alteração - Adicionou-se um módulo de cálculo de média e um novo campo combobo x email.
 
 
 https://user-images.githubusercontent.com/114637779/212553334-8eaa8ad2-3bfd-419b-ba91-0b23d0996a35.mp4
