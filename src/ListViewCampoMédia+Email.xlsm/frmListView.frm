@@ -21,7 +21,7 @@ Const colNota2 As Integer = 5
 Const colNota3 As Integer = 6
 Private idSelecionado As Long
 Dim graficoNumero As Integer
-'F
+'Fu
 Private Sub btnAlterar_Click()
 
     idSelecionado = txtRegistro.Value + 1
