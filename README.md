@@ -1,5 +1,6 @@
 # VBAtSchoolProject
-Projeto de um sistema de gerenciamento de dados acadêmicos 
+sistema de gerenciamento de dados acadêmicos 
+
 
 Funcionalidades: Gerenciar dados de uma determinada planilha(adicionar, excluir e alterar), gerar relatório à parte(em outra planilha), filtrar dados, calcular média e exibir a situação do aluno.
 
