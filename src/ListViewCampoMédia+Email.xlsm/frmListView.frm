@@ -265,6 +265,7 @@ Private Sub UserForm_Initialize()
     
     ListViewAluno.ListItems.Clear
     
+    Dim olaMundo
     Dim linhaAtual As Integer
     Dim i
     Dim ultimaLinha
