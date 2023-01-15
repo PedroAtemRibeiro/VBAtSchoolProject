@@ -1,7 +1,8 @@
 # VBAtSchoolProject
  A project of modules with data treatment of a school.
-/Projet o Vba                    
-formulario modular com funcionalidades de um sistema de calculo de média escolar 
+/Projet o Vba  
+---------------------------------------------------Descrição-------------------------------------------------------------------------------
+formulario modular com funcionalidades de Gerenciar Dados de uma determinada planilha, Exportar um relatório ,  filtrr dados por nome.
 
 
 //ultima alteral - adicionou-se um modulo de calculo de média e um novo campo combobo x email
