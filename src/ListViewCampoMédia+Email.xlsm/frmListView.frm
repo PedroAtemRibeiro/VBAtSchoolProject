@@ -21,15 +21,25 @@ Const colNota2 As Integer = 5
 Const colNota3 As Integer = 6
 Private idSelecionado As Long
 Dim graficoNumero As Integer
-'Fu
+
 Private Sub btnAlterar_Click()
 
-    idSelecionado = txtRegistro.Value + 1
+If txtRegistro <> "" And txtID <> "" And txtNome <> "" And txtNota1 <> "" And txtNota2 <> "" And txtNota3 <> "" Then
+
+     txtInstrucoes = "Alterar"
     
-    ' Clng -2.147.483.648 a 2.147.483.647
-    Call AtualizarInformacoes(CLng(txtRegistro.Value), idSelecionado)
+    btnSalvar.Enabled = True
+    cmdNovo.Enabled = False
+    btnAlterar.Enabled = False
+    btnExcluir.Enabled = False
     
-    Call AtualizaListView
+    Call Habilitar
+    
+Else
+    
+    MsgBox "Por favor, Selecione a linha que deseja alterar"
+
+End If
     
 
 End Sub
@@ -72,6 +82,141 @@ Private Sub AtualizaListView()
         i.ListSubItems.Add Text:=Sheet1.Cells(linhaAtual, colNome).Value & "@gmail.com"
     
     Next linhaAtual
+
+End Sub
+
+Sub pintaLinhasAbaixoMedia()
+
+    Dim linha As Integer
+    Dim coluna As Integer
+   
+    For linha = 1 To ListViewAluno.ListItems.Count
+    
+        For coluna = 1 To 7
+        
+            If ListViewAluno.ListItems.Item(linha).SubItems(6) < 6 Then
+             
+            ListViewAluno.ListItems.Item(linha).ForeColor = RGB(255, 51, 51)
+            ListViewAluno.ListItems.Item(linha).ListSubItems(coluna).ForeColor = RGB(255, 51, 51)
+            ListViewAluno.ListItems.Item(linha).ListSubItems(coluna).Bold = True
+            
+            End If
+    
+        Next coluna
+    
+    Next linha
+
+End Sub
+
+Private Sub btnCancelar_Click()
+
+    
+    txtInstrucoes = "Cancelar"
+    
+    btnSalvar.Enabled = False
+    cmdNovo.Enabled = True
+    btnAlterar.Enabled = True
+    btnExcluir.Enabled = False
+    
+    Call Habilitar
+    
+End Sub
+
+Private Sub btnExcluir_Click()
+
+End Sub
+
+Private Sub btnSalvar_Click()
+    If txtID <> "" And txtNome <> "" And txtNota1 <> "" And txtNota2 <> "" And txtNota3 <> "" Then
+
+
+    If txtInstrucoes = "Alterar" Then
+        
+        idSelecionado = txtRegistro.Value + 1
+        
+        ' Clng -2.147.483.648 a 2.147.483.647
+        Call AtualizarInformacoes(CLng(txtRegistro.Value), idSelecionado)
+        
+        Call AtualizaListView
+        
+        Call CalculaListView
+        Call pintaLinhasAbaixoMedia
+    
+    
+    ElseIf txtInstrucoes = "Novo" Then
+    
+        Dim QtdRegistro As Integer
+        
+        QtdRegistro = Format(ListViewAluno.ListItems.Count, 0) + 1
+        
+        Range("A1048576").End(xlUp).Offset(l, 0) = QtdRegistro
+         
+        txtRegistro = QtdRegistro
+        
+    
+    
+        idSelecionado = txtRegistro.Value + 1
+        
+        ' Clng -2.147.483.648 a 2.147.483.647
+        Call AtualizarInformacoes(CLng(txtRegistro.Value), idSelecionado)
+        
+        Call AtualizaListView
+        
+        Call CalculaListView
+        Call pintaLinhasAbaixoMedia
+        
+        btnSalvar.Enabled = False
+        btnExcluir.Enabled = False
+        
+        Call desabilitar
+    
+    
+    
+        End If
+    
+    
+    Else
+    
+    
+        Call desabilitar
+End If
+    
+    
+End Sub
+Sub desabilitar()
+    txtRegistro.Enabled = False
+    txtID.Enabled = False
+    txtNome.Enabled = False
+    txtNota1.Enabled = False
+    txtNota2.Enabled = False
+    txtNota3.Enabled = False
+    
+    
+    txtRegistro.BackColor = &H8000000F
+    txtID.BackColor = &H8000000F
+    txtNome.BackColor = &H8000000F
+    txtNota1.BackColor = &H8000000F
+    txtNota2.BackColor = &H8000000F
+    txtNota3.BackColor = &H8000000F
+
+
+End Sub
+Sub Habilitar()
+    txtRegistro.Enabled = False
+    txtID.Enabled = True
+    txtNome.Enabled = True
+    txtNota1.Enabled = True
+    txtNota2.Enabled = True
+    txtNota3.Enabled = True
+    
+    
+    txtRegistro.BackColor = &H80000005
+    txtID.BackColor = &H80000005
+    txtNome.BackColor = &H80000005
+    txtNota1.BackColor = &H80000005
+    txtNota2.BackColor = &H80000005
+    txtNota3.BackColor = &H80000005
+
 
 End Sub
 
@@ -152,6 +297,20 @@ Private Sub cmdExportar_Click()
     
     Next
 
+End Sub
+
+Private Sub cmdNovo_Click()
+
+    txtInstrucoes = "Novo"
+    
+    btnSalvar.Enabled = True
+    cmdNovo.Enabled = False
+    btnAlterar.Enabled = False
+    btnExcluir.Enabled = False
+    
+    Call Habilitar
+    
+    
 End Sub
 
 Private Sub ComboBox_Nome_Change()
@@ -289,6 +448,9 @@ Private Sub UserForm_Initialize()
     CheckBox_Selecao.Caption = "Selecionar tudo"
     
     Call CalculaListView
+    Call pintaLinhasAbaixoMedia
+    Call desabilitar
+    
 
 End Sub
 
@@ -332,18 +494,18 @@ Sub CalculaListView()
     '-----------------------------------
     
     On Error Resume Next
-    Dim qtdRegistro, media1, media2 As Currency
-    qtdRegistro = Format(ListViewAluno.ListItems.Count, 0)
+    Dim QtdRegistro, media1, media2 As Currency
+    QtdRegistro = Format(ListViewAluno.ListItems.Count, 0)
     
     
     media1 = (nota1 + nota2 + nota3) / 3
-    media2 = media1 / qtdRegistro
+    media2 = media1 / QtdRegistro
     
-    lblQtd.Caption = qtdRegistro
+    lblQtd.Caption = QtdRegistro
     
     txtResumoMedia = Format(media2, "#,#0.0")
     
-    If qtdRegistro > 1 Then
+    If QtdRegistro > 1 Then
     
                 lblSituacao.Caption = "Turma: "
                 
