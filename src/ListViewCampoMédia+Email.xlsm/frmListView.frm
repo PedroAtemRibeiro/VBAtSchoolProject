@@ -48,7 +48,7 @@ Private Sub AtualizarInformacoes(ByVal id As Long, ByVal idSelecionado As Long)
 
     With Sheet1
     
-        .Cells(idSelecionado, colRegistro).Value = txtRegistro.Value
+        .Cells(idSelecionado, colRegistro).Value = txtRegistro.Value + 1
         .Cells(idSelecionado, colID).Value = txtID.Value
         .Cells(idSelecionado, colNome).Value = txtNome.Value
         .Cells(idSelecionado, colNota1).Value = txtNota1.Value
@@ -70,7 +70,7 @@ Private Sub AtualizaListView()
     ultimaLinha = Sheet1.Cells(Sheet1.Cells.Rows.Count, colRegistro).End(xlUp).Row 'Vai encontrar a ultima da minha planilha
     For linhaAtual = 2 To ultimaLinha
         
-        Set i = ListViewAluno.ListItems.Add(Text:=Format(Sheet1.Cells(linhaAtual, colRegistro).Value, 0))
+        Set i = ListViewAluno.ListItems.Add(Text:=Format(Sheet1.Cells(linhaAtual, colRegistro).Value + 1, 0))
         i.ListSubItems.Add Text:=Sheet1.Cells(linhaAtual, colID).Value
         i.ListSubItems.Add Text:=Sheet1.Cells(linhaAtual, colNome).Value
         i.ListSubItems.Add Text:=Sheet1.Cells(linhaAtual, colNota1).Value
@@ -123,6 +123,48 @@ Private Sub btnCancelar_Click()
 End Sub
 
 Private Sub btnExcluir_Click()
+
+    idSelecionado = txtRegistro.Value + 1
+    
+    
+    Dim confirmar As VbMsgBoxResult
+    confirmar = MsgBox("Deseja mesmo excluir o registro " & txtRegistro & "?", vbYesNo, "Confirmar")
+    
+    
+    If confirmar = vbYes Then
+        
+        Sheet1.Range(Sheet1.Cells(idSelecionado, colRegistro), _
+        Sheet1.Cells(idSelecionado, colRegistro)).EntireRow.Delete
+        
+        Sheets("Alunos").Select
+        
+        [A2] = "1"
+        [A3] = "=R[-1]C+1"
+        Range("A3").AutoFill Destination:=Range("A3:A" & Range("b" & Rows.Count).End(xlUp).Row)
+        
+              
+        Call AtualizarInformacoes(CLng(txtRegistro.Value), idSelecionado)
+        
+        Call AtualizaListView
+        
+        Call CalculaListView
+        Call pintaLinhasAbaixoMedia
+        
+        btnSalvar.Enabled = False
+        btnExcluir.Enabled = False
+        
+        Call desabilitar
+    
+            
+            
+    Else
+    
+    
+    End If
+    
+    
+            
+        
 
 End Sub
 
@@ -203,15 +245,15 @@ Sub desabilitar()
 End Sub
 Sub Habilitar()
     txtRegistro.Enabled = False
-    txtID.Enabled = True
+    txtID.Enabled = False
     txtNome.Enabled = True
     txtNota1.Enabled = True
     txtNota2.Enabled = True
     txtNota3.Enabled = True
     
     
-    txtRegistro.BackColor = &H80000005
-    txtID.BackColor = &H80000005
+    txtRegistro.BackColor = &H8000000F
+    txtID.BackColor = &H8000000F
     txtNome.BackColor = &H80000005
     txtNota1.BackColor = &H80000005
     txtNota2.BackColor = &H80000005
@@ -303,10 +345,23 @@ Private Sub cmdNovo_Click()
 
     txtInstrucoes = "Novo"
     
+    Dim ultimaLinha As Integer
+        
+    ultimaLinha = ListViewAluno.ListItems.Count
+    
+    
+    
     btnSalvar.Enabled = True
     cmdNovo.Enabled = False
     btnAlterar.Enabled = False
     btnExcluir.Enabled = False
+    
+    txtID = ListViewAluno.ListItems.Item(ultimaLinha).ListSubItems(1).Text + 1
+    txtRegistro = ListViewAluno.ListItems.Item(ultimaLinha).Text + 1
+    
+    
+    txtID.Enabled = True
+    
     
     Call Habilitar
     
