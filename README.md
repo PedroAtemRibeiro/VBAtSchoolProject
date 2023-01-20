@@ -24,3 +24,6 @@ V1.1.2 -> modificação função:Ao adicionar uma nova linha de registro(evento 
 
 https://user-images.githubusercontent.com/114637779/213010150-bc7f389b-c786-4f64-816d-a9c2279619c6.mp4
 
+V1.1.3 ->
+Novos Campos Adicionados : Data e Matéria
+Função Filtro  Adicionada : Foram adicionados 3 filtros, 1- Nome do aluno 2- Matéria   3- Data de ocorrência (entre determinado período), que ao serem selecionados, alteram os dados exibidos na ListView 
