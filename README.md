@@ -27,3 +27,8 @@ https://user-images.githubusercontent.com/114637779/213010150-bc7f389b-c786-4f64
 V1.1.3 ->
 Novos Campos Adicionados : Data e Matéria
 Função Filtro  Adicionada : Foram adicionados 3 filtros, 1- Nome do aluno 2- Matéria   3- Data de ocorrência (entre determinado período), que ao serem selecionados, alteram os dados exibidos na ListView 
+
+
+
+https://user-images.githubusercontent.com/114637779/213758323-512374ff-3beb-42aa-b604-06da6aa4f739.mp4
+
