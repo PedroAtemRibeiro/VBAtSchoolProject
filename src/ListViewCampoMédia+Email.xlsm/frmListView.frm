@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmListView 
    Caption         =   "Modelo ListView"
-   ClientHeight    =   7350
+   ClientHeight    =   8400.001
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   11835
+   ClientWidth     =   13500
    OleObjectBlob   =   "frmListView.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -19,19 +19,21 @@ Const colNome As Integer = 3
 Const colNota1 As Integer = 4
 Const colNota2 As Integer = 5
 Const colNota3 As Integer = 6
+Const colData As Integer = 7
+Const colMateria As Integer = 8
 Private idSelecionado As Long
 Dim graficoNumero As Integer
 
 Private Sub btnAlterar_Click()
 
-If txtRegistro <> "" And txtID <> "" And txtNome <> "" And txtNota1 <> "" And txtNota2 <> "" And txtNota3 <> "" Then
+If txtRegistro <> "" And txtID <> "" And txtNome <> "" And txtNota1 <> "" And txtNota2 <> "" And txtNota3 <> "" And txtData <> "" And txtMateria <> "" Then
 
      txtInstrucoes = "Alterar"
     
     btnSalvar.Enabled = True
-    cmdNovo.Enabled = False
-    btnAlterar.Enabled = False
-    btnExcluir.Enabled = False
+    btnAlterar.Enabled = True
+    btnExcluir.Enabled = True
+    cmdNovo.Enabled = True
     
     Call Habilitar
     
@@ -48,12 +50,14 @@ Private Sub AtualizarInformacoes(ByVal id As Long, ByVal idSelecionado As Long)
 
     With Sheet1
     
-        .Cells(idSelecionado, colRegistro).Value = txtRegistro.Value + 1
+        .Cells(idSelecionado, colRegistro).Value = txtRegistro.Value
         .Cells(idSelecionado, colID).Value = txtID.Value
         .Cells(idSelecionado, colNome).Value = txtNome.Value
         .Cells(idSelecionado, colNota1).Value = txtNota1.Value
         .Cells(idSelecionado, colNota2).Value = txtNota2.Value
         .Cells(idSelecionado, colNota3).Value = txtNota3.Value
+        .Cells(idSelecionado, colData).Value = txtData.Value
+        .Cells(idSelecionado, colMateria).Value = txtMateria.Value
     
     End With
 
@@ -70,7 +74,7 @@ Private Sub AtualizaListView()
     ultimaLinha = Sheet1.Cells(Sheet1.Cells.Rows.Count, colRegistro).End(xlUp).Row 'Vai encontrar a ultima da minha planilha
     For linhaAtual = 2 To ultimaLinha
         
-        Set i = ListViewAluno.ListItems.Add(Text:=Format(Sheet1.Cells(linhaAtual, colRegistro).Value + 1, 0))
+        Set i = ListViewAluno.ListItems.Add(Text:=Format(Sheet1.Cells(linhaAtual, colRegistro).Value, 0))
         i.ListSubItems.Add Text:=Sheet1.Cells(linhaAtual, colID).Value
         i.ListSubItems.Add Text:=Sheet1.Cells(linhaAtual, colNome).Value
         i.ListSubItems.Add Text:=Sheet1.Cells(linhaAtual, colNota1).Value
@@ -81,8 +85,15 @@ Private Sub AtualizaListView()
         i.ListSubItems.Add Text:=Format((Sheet1.Cells(linhaAtual, colNota1) + Sheet1.Cells(linhaAtual, colNota2) + Sheet1.Cells(linhaAtual, colNota3)) / 3, "#,#0.0")
         i.ListSubItems.Add Text:=Sheet1.Cells(linhaAtual, colNome).Value & "@gmail.com"
     
+        i.ListSubItems.Add Text:=Sheet1.Cells(linhaAtual, colData).Value
+        i.ListSubItems.Add Text:=Sheet1.Cells(linhaAtual, colMateria).Value
     Next linhaAtual
 
+        Call pintaLinhasAbaixoMedia
+        
+        
+        
+        
 End Sub
 
 Sub pintaLinhasAbaixoMedia()
@@ -116,14 +127,14 @@ Private Sub btnCancelar_Click()
     btnSalvar.Enabled = False
     cmdNovo.Enabled = True
     btnAlterar.Enabled = True
-    btnExcluir.Enabled = False
+    btnExcluir.Enabled = True
     
     Call Habilitar
     
 End Sub
 
 Private Sub btnExcluir_Click()
-
+    
     idSelecionado = txtRegistro.Value + 1
     
     
@@ -140,43 +151,40 @@ Private Sub btnExcluir_Click()
         
         [A2] = "1"
         [A3] = "=R[-1]C+1"
-        Range("A3").AutoFill Destination:=Range("A3:A" & Range("b" & Rows.Count).End(xlUp).Row)
+        Range("A3").AutoFill Destination:=Range("A3:A" & Range("B" & Rows.Count).End(xlUp).Row)
         
-              
-        Call AtualizarInformacoes(CLng(txtRegistro.Value), idSelecionado)
         
-        Call AtualizaListView
-        
-        Call CalculaListView
-        Call pintaLinhasAbaixoMedia
         
         btnSalvar.Enabled = False
-        btnExcluir.Enabled = False
+        
+        
         
         Call desabilitar
-    
+        
+        btnSalvar.Enabled = False
+        btnExcluir.Enabled = True
             
-            
-    Else
+ 
     
     
     End If
     
-    
+    Call AtualizaListView
+    Call UserForm_Initialize
             
         
 
 End Sub
 
 Private Sub btnSalvar_Click()
-    If txtID <> "" And txtNome <> "" And txtNota1 <> "" And txtNota2 <> "" And txtNota3 <> "" Then
+    If txtID <> "" And txtNome <> "" And txtNota1 <> "" And txtNota2 <> "" And txtNota3 <> "" And txtData <> "" And txtMateria <> "" Then
 
 
     If txtInstrucoes = "Alterar" Then
         
         idSelecionado = txtRegistro.Value + 1
         
-        ' Clng -2.147.483.648 a 2.147.483.647
+       
         Call AtualizarInformacoes(CLng(txtRegistro.Value), idSelecionado)
         
         Call AtualizaListView
@@ -202,17 +210,29 @@ Private Sub btnSalvar_Click()
         ' Clng -2.147.483.648 a 2.147.483.647
         Call AtualizarInformacoes(CLng(txtRegistro.Value), idSelecionado)
         
-        Call AtualizaListView
+        
         
         Call CalculaListView
-        Call pintaLinhasAbaixoMedia
         
-        btnSalvar.Enabled = False
-        btnExcluir.Enabled = False
         
         Call desabilitar
+        
+        
+        btnExcluir.Enabled = True
+        cmdNovo.Enabled = True
+        btnAlterar.Enabled = True
+        btnCancelar.Enabled = True
+        btnSalvar.Enabled = False
+        
+        
+        
+        Sheets("Alunos").Select
+        
+        [A2] = "1"
+        [A3] = "=R[-1]C+1"
+        Range("A3").AutoFill Destination:=Range("A3:A" & Range("B" & Rows.Count).End(xlUp).Row)
     
-    
+        Call AtualizaListView
     
         End If
     
@@ -223,6 +243,7 @@ Private Sub btnSalvar_Click()
         Call desabilitar
 End If
     
+    Call UserForm_Initialize
     
 End Sub
 Sub desabilitar()
@@ -232,6 +253,8 @@ Sub desabilitar()
     txtNota1.Enabled = False
     txtNota2.Enabled = False
     txtNota3.Enabled = False
+    txtData.Enabled = False
+    txtMateria.Enabled = False
     
     
     txtRegistro.BackColor = &H8000000F
@@ -240,6 +263,8 @@ Sub desabilitar()
     txtNota1.BackColor = &H8000000F
     txtNota2.BackColor = &H8000000F
     txtNota3.BackColor = &H8000000F
+    txtData.BackColor = &H8000000F
+    txtMateria.BackColor = &H8000000F
 
 
 End Sub
@@ -250,6 +275,8 @@ Sub Habilitar()
     txtNota1.Enabled = True
     txtNota2.Enabled = True
     txtNota3.Enabled = True
+    txtData.Enabled = True
+    txtMateria.Enabled = True
     
     
     txtRegistro.BackColor = &H8000000F
@@ -258,6 +285,8 @@ Sub Habilitar()
     txtNota1.BackColor = &H80000005
     txtNota2.BackColor = &H80000005
     txtNota3.BackColor = &H80000005
+    txtData.BackColor = &H80000005
+    txtMateria.BackColor = &H80000005
 
 
 End Sub
@@ -325,13 +354,18 @@ Private Sub cmdExportar_Click()
             [D1] = "Nota 1"
             [E1] = "Nota 2"
             [F1] = "Nota 3"
-        
+            [G1] = "Data"
+            [H1] = "Materia"
+            
             Sheets("Relatorio").Cells(linha, 1) = Me.ListViewAluno.ListItems.Item(i).Text
             Sheets("Relatorio").Cells(linha, 2) = Me.ListViewAluno.ListItems.Item(i).ListSubItems(1).Text
             Sheets("Relatorio").Cells(linha, 3) = Me.ListViewAluno.ListItems.Item(i).ListSubItems(2).Text
             Sheets("Relatorio").Cells(linha, 4) = Me.ListViewAluno.ListItems.Item(i).ListSubItems(3).Text
             Sheets("Relatorio").Cells(linha, 5) = Me.ListViewAluno.ListItems.Item(i).ListSubItems(4).Text
             Sheets("Relatorio").Cells(linha, 6) = Me.ListViewAluno.ListItems.Item(i).ListSubItems(5).Text
+            Sheets("Relatorio").Cells(linha, 7) = Me.ListViewAluno.ListItems.Item(i).ListSubItems(8).Text
+            Sheets("Relatorio").Cells(linha, 8) = Me.ListViewAluno.ListItems.Item(i).ListSubItems(9).Text
+            
             
             linha = linha + 1
         
@@ -349,12 +383,22 @@ Private Sub cmdNovo_Click()
         
     ultimaLinha = ListViewAluno.ListItems.Count
     
+    txtNome = ""
+    txtNota1 = ""
+    txtNota2 = ""
+    txtNota3 = ""
+    txtData = ""
+    txtMateria = ""
+    
+    
     
     
     btnSalvar.Enabled = True
     cmdNovo.Enabled = False
     btnAlterar.Enabled = False
     btnExcluir.Enabled = False
+    
+    
     
     txtID = ListViewAluno.ListItems.Item(ultimaLinha).ListSubItems(1).Text + 1
     txtRegistro = ListViewAluno.ListItems.Item(ultimaLinha).Text + 1
@@ -366,79 +410,137 @@ Private Sub cmdNovo_Click()
     Call Habilitar
     
     
+    
 End Sub
 
-Private Sub ComboBox_Nome_Change()
+Sub Filtrar()
 
-    Dim Pesquisar As String
-    Dim ValorEncontrado, ultimaLinha As Long
     Dim linha As Long
-    Dim i
+    Dim textoPesquisa As String
+    Dim Data As Date, DataInicio As Date, DataFim As Date
+        
+    If txtDataInicio <> Empty Then
+        
+        DataInicio = txtDataInicio.Value
+        
+    End If
     
-    Pesquisar = LCase(ComboBox_Nome.Value)
+    If txtDataFim <> Empty Then
+        
+        DataFim = txtDataFim.Value
+        
+    End If
+    
+       If txtDataInicio = Empty And txtDataFim <> Empty Then
+        
+        DataInicio = DataFim
+        
+    End If
+    
+
+    If txtDataInicio <> Empty And txtDataFim = Empty Then
+        
+        DataFim = DataInicio
+        
+    End If
+    
+    linha = 2
     
     ListViewAluno.ListItems.Clear
     
-    If Pesquisar <> Empty Then
-    
-        ultimaLinha = Sheet1.Cells(Sheet1.Cells.Rows.Count, colRegistro).End(xlUp).Row
-        
-        For linha = 2 To ultimaLinha
+        With Sheet1
             
-            ValorEncontrado = InStr(1, Sheet1.Cells(linha, 3), Pesquisar, vbTextCompare)
+            While .Cells(linha, 1).Value <> Empty
                 
-                If ValorEncontrado > 0 Then
+                textoPesquisa = .Cells(linha, 3).Value
                 
-                    Set i = ListViewAluno.ListItems.Add(Text:=Format(Sheet1.Cells(linha, colRegistro).Value, "0"))
-                    i.ListSubItems.Add Text:=Sheet1.Cells(linha, colID).Value
-                    i.ListSubItems.Add Text:=Sheet1.Cells(linha, colNome).Value
-                    i.ListSubItems.Add Text:=Sheet1.Cells(linha, colNota1).Value
-                    i.ListSubItems.Add Text:=Sheet1.Cells(linha, colNota2).Value
-                    i.ListSubItems.Add Text:=Sheet1.Cells(linha, colNota3).Value
+                If UCase(Left(textoPesquisa, Len(ComboBox_Nome.Text))) = UCase(ComboBox_Nome.Text) Then
+                
+                        textoPesquisa = .Cells(linha, 8).Value
                     
+                        If UCase(Left(textoPesquisa, Len(combobox_Materia.Text))) = UCase(combobox_Materia.Text) Then
                     
-                    On Error Resume Next
-                    i.ListSubItems.Add Text:=Format((Sheet1.Cells(linha, colNota1) + Sheet1.Cells(linha, colNota2) + Sheet1.Cells(linha, colNota3)) / 3, "#,#0.0")
-                    i.ListSubItems.Add Text:=Sheet1.Cells(linha, colNome).Value & "@gmail.com"
+                        
+                                If DataInicio <> Empty And DataFim <> Empty Then
+                                
+                                    Data = .Cells(linha, 7).Value
+                                    
+                                    If Data >= DataInicio And Data <= DataFim Then
+                                    
+                                        
+                                        Set lista = ListViewAluno.ListItems.Add(Text:=Cells(linha, 1).Value)
+                                        lista.ListSubItems.Add Text:=Cells(linha, 2).Value
+                                        lista.ListSubItems.Add Text:=Cells(linha, 3).Value
+                                        lista.ListSubItems.Add Text:=Cells(linha, 4).Value
+                                        lista.ListSubItems.Add Text:=Cells(linha, 5).Value
+                                        lista.ListSubItems.Add Text:=Cells(linha, 6).Value
+                                        
+                                        
+                                        On Error Resume Next
+                                        lista.ListSubItems.Add Text:=Format((Sheet1.Cells(linhaAtual, colNota1) + Sheet1.Cells(linhaAtual, colNota2) + Sheet1.Cells(linhaAtual, colNota3)) / 3, "#,#0.0")
+                                        lista.ListSubItems.Add Text:=Sheet1.Cells(linhaAtual, colNome).Value & "@gmail.com"
+                                        
+                                        lista.ListSubItems.Add Text:=Cells(linha, 7).Value
+                                        lista.ListSubItems.Add Text:=Cells(linha, 8).Value
+                                    
+                                    End If
+                                    
+                                    
+                                Else
+                                
+                                         Set lista = ListViewAluno.ListItems.Add(Text:=Cells(linha, 1).Value)
+                                        lista.ListSubItems.Add Text:=Cells(linha, 2).Value
+                                        lista.ListSubItems.Add Text:=Cells(linha, 3).Value
+                                        lista.ListSubItems.Add Text:=Cells(linha, 4).Value
+                                        lista.ListSubItems.Add Text:=Cells(linha, 5).Value
+                                        lista.ListSubItems.Add Text:=Cells(linha, 6).Value
+                                        
+                                        
+                                        On Error Resume Next
+                                        lista.ListSubItems.Add Text:=Format((Sheet1.Cells(linha, colNota1) + Sheet1.Cells(linha, colNota2) + Sheet1.Cells(linha, colNota3)) / 3, "#,#0.0")
+                                        lista.ListSubItems.Add Text:=Sheet1.Cells(linha, colNome).Value & "@gmail.com"
+                                        
+                                        lista.ListSubItems.Add Text:=Cells(linha, 7).Value
+                                        lista.ListSubItems.Add Text:=Cells(linha, 8).Value
+                                    
+                                End If
+                        
+                        End If
                 
                 End If
-            
-        
-        Next linha
-    
-    Else
-    
-            ultimaLinha = Sheet1.Cells(Sheet1.Cells.Rows.Count, colRegistro).End(xlUp).Row
-            
-            For linha = 2 To ultimaLinha
                 
-                    
-                        Set i = ListViewAluno.ListItems.Add(Text:=Format(Sheet1.Cells(linha, colRegistro).Value, "0"))
-                        i.ListSubItems.Add Text:=Sheet1.Cells(linha, colID).Value
-                        i.ListSubItems.Add Text:=Sheet1.Cells(linha, colNome).Value
-                        i.ListSubItems.Add Text:=Sheet1.Cells(linha, colNota1).Value
-                        i.ListSubItems.Add Text:=Sheet1.Cells(linha, colNota2).Value
-                        i.ListSubItems.Add Text:=Sheet1.Cells(linha, colNota3).Value
-                    
-                        On Error Resume Next
-                        i.ListSubItems.Add Text:=Format((Sheet1.Cells(linha, colNota1) + Sheet1.Cells(linha, colNota2) + Sheet1.Cells(linha, colNota3)) / 3, "#,#0.0")
-                        i.ListSubItems.Add Text:=Sheet1.Cells(linha, colNome).Value & "@gmail.com"
+               linha = linha + 1
             
-            Next linha
-    
+            Wend
+            
+        End With
+        
         
     
-    End If
+    Set lista = Nothing
     
-    Call CalculaListView
+    Exit Sub
     
-    
+End Sub
+
+Private Sub combobox_Materia_Change()
+
+        Call CalculaListView
+        
+        
+        Call Filtrar
 
 End Sub
 
-
-
-
+Private Sub ComboBox_Nome_Change()
+                
+        Call CalculaListView
+        
+        
+        
+        Call Filtrar
+        
+End Sub
 
 Private Sub ListViewAluno_ItemClick(ByVal Item As MSComctlLib.ListItem)
 
@@ -450,6 +552,8 @@ Private Sub ListViewAluno_ItemClick(ByVal Item As MSComctlLib.ListItem)
         txtNota1.Text = ListViewAluno.SelectedItem.SubItems(3)
         txtNota2.Text = ListViewAluno.SelectedItem.SubItems(4)
         txtNota3.Text = ListViewAluno.SelectedItem.SubItems(5)
+        txtData.Text = ListViewAluno.SelectedItem.SubItems(8)
+        txtMateria.Text = ListViewAluno.SelectedItem.SubItems(9)
         
     
     Else
@@ -461,7 +565,24 @@ Private Sub ListViewAluno_ItemClick(ByVal Item As MSComctlLib.ListItem)
 
 End Sub
 
+
+
+
+
+Private Sub txtDataFim_Exit(ByVal Cancel As MSForms.ReturnBoolean)
+        
+        
+
+                
+        Call CalculaListView
+        
+        
+        Call Filtrar
+
+End Sub
+
 Private Sub UserForm_Initialize()
+
 
     With ListViewAluno
         .Gridlines = True
@@ -475,6 +596,9 @@ Private Sub UserForm_Initialize()
         .ColumnHeaders.Add , , "Nota 3", 60, lvwColumnLeft
         .ColumnHeaders.Add , , "Media", 60, lvwColumnLeft
         .ColumnHeaders.Add , , "E-mail", 90, lvwColumnLeft
+        .ColumnHeaders.Add , , "Data", 90, lvwColumnLeft
+        .ColumnHeaders.Add , , "Materia", 90, lvwColumnLeft
+        
     End With
     
     ListViewAluno.ListItems.Clear
@@ -497,6 +621,9 @@ Private Sub UserForm_Initialize()
         On Error Resume Next
         i.ListSubItems.Add Text:=Format((Sheet1.Cells(linhaAtual, colNota1) + Sheet1.Cells(linhaAtual, colNota2) + Sheet1.Cells(linhaAtual, colNota3)) / 3, "#,#0.0")
         i.ListSubItems.Add Text:=Sheet1.Cells(linhaAtual, colNome).Value & "@gmail.com"
+        
+        i.ListSubItems.Add Text:=Sheet1.Cells(linhaAtual, colData).Value
+        i.ListSubItems.Add Text:=Sheet1.Cells(linhaAtual, colMateria).Value
     Next linhaAtual
     
     CheckBox_Selecao.Value = False
@@ -505,6 +632,65 @@ Private Sub UserForm_Initialize()
     Call CalculaListView
     Call pintaLinhasAbaixoMedia
     Call desabilitar
+    
+    Dim totalLinha As Long
+    Dim linha As Long
+    
+    
+    totalLinha = Sheets("Alunos").UsedRange.Rows.Count
+    
+    For linha = 2 To totalLinha
+    
+        combobox_Materia.AddItem Sheets("Alunos").Range("H" & linha).Value
+    
+    Next linha
+    
+    
+    For lista1 = 0 To totalLinha
+        
+            For lista2 = totalLinha - 1 To lista1 + 1 Step -1
+            
+                If combobox_Materia.List(lista2) = combobox_Materia.List(lista1) Then
+                
+                    combobox_Materia.RemoveItem (lista2)
+                    
+                End If
+            
+            Next lista2
+        
+        
+    Next lista1
+    
+    '------------------------------------------------------------------------------------------------------
+    
+    linha = 0
+    
+    
+    
+    totalLinha = Sheets("Alunos").UsedRange.Rows.Count
+    
+    For linha = 2 To totalLinha
+    
+        ComboBox_Nome.AddItem Sheets("Alunos").Range("C" & linha).Value
+    
+    Next linha
+    
+    
+    For SegundaLista1 = 0 To totalLinha
+        
+            For SegundaLista2 = totalLinha - 1 To SegundaLista1 + 1 Step -1
+            
+                If ComboBox_Nome.List(SegundaLista2) = ComboBox_Nome.List(SegundaLista1) Then
+                
+                    ComboBox_Nome.RemoveItem (SegundaLista2)
+                    
+                End If
+            
+            Next SegundaLista2
+        
+        
+    Next SegundaLista1
+
     
 
 End Sub
