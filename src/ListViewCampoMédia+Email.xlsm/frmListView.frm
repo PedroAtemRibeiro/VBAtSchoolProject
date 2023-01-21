@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmListView 
    Caption         =   "Modelo ListView"
-   ClientHeight    =   8400.001
+   ClientHeight    =   8700.001
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   13500
+   ClientWidth     =   15945
    OleObjectBlob   =   "frmListView.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -330,10 +330,16 @@ Private Sub CheckBox_Selecao_Click()
     
     End If
     
+    
+    ProgressBar1.Visible = False
+    
 
 End Sub
 
 Private Sub cmdExportar_Click()
+    
+    ProgressBar1.Visible = True
+    
 
     Sheets("Relatorio").Select
     Cells.Select
@@ -343,6 +349,8 @@ Private Sub cmdExportar_Click()
     Dim i As Long
     Dim linha As Integer
     linha = 2
+    
+    ProgressBar1.Max = CInt(ListViewAluno.ListItems.Count)
     
     For i = 1 To Me.ListViewAluno.ListItems.Count
     
@@ -365,6 +373,17 @@ Private Sub cmdExportar_Click()
             Sheets("Relatorio").Cells(linha, 6) = Me.ListViewAluno.ListItems.Item(i).ListSubItems(5).Text
             Sheets("Relatorio").Cells(linha, 7) = Me.ListViewAluno.ListItems.Item(i).ListSubItems(8).Text
             Sheets("Relatorio").Cells(linha, 8) = Me.ListViewAluno.ListItems.Item(i).ListSubItems(9).Text
+            
+            If linha > ListViewAluno.ListItems.Count Then
+                
+                    
+                    
+            Else
+                
+                ProgressBar1.Value = linha
+            
+            
+            End If
             
             
             linha = linha + 1
@@ -564,10 +583,24 @@ Private Sub ListViewAluno_ItemClick(ByVal Item As MSComctlLib.ListItem)
     
 
 End Sub
+Private Sub TreeView1_NodeClick(ByVal Node As MSComctlLib.Node)
 
 
+        If Not Node.Parent Is Nothing Then
+        
+                combobox_Materia = Node.Parent
+                
+                ComboBox_Nome = Node.Text
+            
+        Else
+                   combobox_Materia = Node.Key
+                   
+                   ComboBox_Nome = ""
+        
+        End If
 
 
+End Sub
 
 Private Sub txtDataFim_Exit(ByVal Cancel As MSForms.ReturnBoolean)
         
@@ -692,6 +725,102 @@ Private Sub UserForm_Initialize()
     Next SegundaLista1
 
     
+    ordenaItemsComboBox ComboBox_Nome.name
+    ordenaItemsComboBox combobox_Materia.name
+    
+    Dim ultimaLinhaListView As Double
+    ultimaLinhaListView = ListViewAluno.ListItems.Count
+    
+    If ultimaLinhaListView >= "1" Then
+    
+        ListViewAluno.ListItems(ultimaLinhaListView).Selected = True
+        ListViewAluno.ListItems(ultimaLinhaListView).EnsureVisible
+    
+    End If
+    
+    Dim planilhaSelecionada As Worksheet
+    Set planilhaSelecionada = Sheets("Dados Combobox Dependente")
+    
+    With planilhaSelecionada
+    
+        TreeView1.Nodes.Add Key:="Matematica", Text:="Matematica"
+        TreeView1.Nodes.Add Key:="Fisica", Text:="Fisica"
+        TreeView1.Nodes.Add Key:="Quimica", Text:="Quimica"
+        TreeView1.Nodes.Add Key:="Portugues", Text:="Portugues"
+    
+    End With
+    
+    Call preencheNosFilhos("Matematica")
+    Call preencheNosFilhos("Fisica")
+    Call preencheNosFilhos("Quimica")
+    Call preencheNosFilhos("Portugues")
+    
+End Sub
+Private Sub preencheNosFilhos(ByVal pai As String)
+    
+    With Planilha2
+    
+        Dim contador As Long
+        contador = 2
+        
+        Do Until Sheets("Dados Combobox Dependente").Cells(contador, 1) = "Parar"
+        
+            If Sheets("Dados Combobox Dependente").Cells(contador, 3) = pai Then
+            
+                    TreeView1.Nodes.Add pai, tvwChild, pai + CStr(contador), Sheets("Dados Combobox Dependente").Cells(contador, 2)
+                
+            Else
+            
+            
+            End If
+        
+            contador = contador + 1
+        Loop
+    
+    End With
+
+
+End Sub
+
+Sub ordenaItemsComboBox(DadosCombobox)
+
+    On Error GoTo Erro
+    
+    Dim posicao As Double
+    Dim totalLinhas As Double
+    Dim texto As String
+    Dim dentroVez1, vez1 As Double
+    
+    posição = 0
+    
+    
+    totalLinhas = Controls(DadosCombobox).ListCount - 1
+    
+    For vez1 = posicao To totalLinhas
+        
+        For dentroVez1 = vez1 To totalLinhas
+        
+            If Controls(DadosCombobox).List(vez1) > Controls(DadosCombobox).List(dentroVez1) Then
+                
+                texto = Controls(DadosCombobox).List(dentroVez1)
+                Controls(DadosCombobox).List(dentroVez1) = Controls(DadosCombobox).List(vez1)
+                Controls(DadosCombobox).List(vez1) = texto
+            End If
+        
+        Next dentroVez1
+        
+    Next vez1
+    
+Erro:
+    Exit Sub
+    
+        MsgBox "Erro ao Ordenar Registros"
+    
+    
+    
+
+
+
 
 End Sub
 

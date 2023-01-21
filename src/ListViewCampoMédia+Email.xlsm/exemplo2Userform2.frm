@@ -13,7 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Public TotalLinhas As Integer
+Public totalLinhas As Integer
 Public Alunos As Worksheet
 Public AlunosLinha As Integer
 
@@ -63,13 +63,13 @@ Private Sub UserForm_Initialize()
     Set Alunos = Worksheets("Alunos")
     
     'TotalLinhas = Planilha1.UsedRange.Rows.Count
-    TotalLinhas = Sheet1.UsedRange.Rows.Count
+    totalLinhas = Sheet1.UsedRange.Rows.Count
     
-    If TotalLinhas > 1 Then
+    If totalLinhas > 1 Then
     
         With ComboBox_ID
             
-            .RowSource = "Alunos!B2:B" & TotalLinhas
+            .RowSource = "Alunos!B2:B" & totalLinhas
             
         End With
     
