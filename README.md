@@ -1,5 +1,6 @@
 # VBAtSchoolProject
-Sistema de gerenciamento de dados acadêmicos.
+Projeto de um sistema de gerenciamento( entrada/ alteraçãode dados, e consulta de média ou  situação de alunos) para uma instituição escolar, com      visualização de dados personalizada( gráfico com os índices das 3 notas trimestrais e média de alunos, turma e todas as turmas) , e filtros de dados, tanto com campo de busca, como também na estrutura TreeView, exibido em hierarquia entre turmas(matérias) e alunos (nomes). 
+
 
 
 Funcionalidades: Gerenciar dados de uma determinada planilha(adicionar, excluir e alterar), gerar relatório à parte(em outra planilha), filtrar dados, calcular média e exibir a situação do aluno.
